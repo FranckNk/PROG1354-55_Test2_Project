@@ -6,7 +6,16 @@
 		{
 			"name": "BMPE280_OLED_ESP32_RTC_LCD",
 			"path": "..\\..\\BMPE280_OLED_ESP32_RTC_LCD"
+		},
+		{
+			"name": "Server_ESP32",
+			"path": "..\\..\\Server_ESP32"
+		},
+		{
+			"path": "..\\..\\..\\Git\\IdOProgramming\\CodesVS\\ProgrammationWeb"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "ProgrammationWeb"
+	}
 }
