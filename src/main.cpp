@@ -5,7 +5,7 @@ AUTEUR         : Franck Nkeubou Awougang
 DATE           : 04/04/2022
 DESCRIPTION    : Programme pour détecter la température dans une machine et consulter via une page web
 									ou un site web du même réseau.
-VERSION        : 0.0.1
+VERSION        : 0.0.2
 
 */
 
@@ -62,7 +62,7 @@ const char* password = "42Bidules!";
 */
 
 
-const char* http_username = "admin";
+const char* http_username = "franck";
 const char* http_password = "admin";
 
 RTC_DS3231 rtc;
@@ -81,15 +81,13 @@ AsyncWebServer server(80);
 
 // Generally, you should use "unsigned long" for variables that hold time
 // The value will quickly become too large for an int to store
-unsigned long previousMillis = 0;    // will store last time BMP280 was updated
-
 // Updates BMP280 readings every 10 seconds
 const long Interval = 8000;  
 Timer TempsPause;
 Timer TempsPauseValues;
 
 bool StateLED = false;
-uint8_t PinLED = 2;
+const int PinLED = 2;
 
 // Déclaration des fonctions. 
 void BlinkLED();
@@ -145,7 +143,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 		<body>
 				<div class="container" style="width: 70rem; padding-left: 0px; padding-right: 0px; margin-top: 100px; height: 600px; box-shadow: 10px 10px 10px 10px rgb(181, 181, 181);">
 						<div class="row headenn">
-								<div class="col-xs-12">ESP32 Weather <br>Station</div>
+								<div class="col-xs-12">ESP32 Weather <br>Station customize</div>
 						</div>
 						<div class="row justify-content-between">
 								<div class="col-md-3"><i class="fas fa-temperature-high"></i></div>
@@ -332,13 +330,13 @@ void setup() {
 	//Start serveur
 	server.begin();
 	Serial.println("HTTP server started");
-	TempsPause.startTimer(Interval/1000);
+	TempsPause.startTimer(Interval/10);
 }
 
 void loop() {
+	
 	if (TempsPause.isTimerReady()) // Si on a attendu près d'une seconde, on peut recalculer le temps.
 	{
-				
 		TempsActuel = rtc.now();
 		// On construit la chaine pour la date.
 		DateActuelle = "" + String(TempsActuel.year(), DEC) + "/" + String(TempsActuel.month(), DEC) + "/" + 
@@ -349,37 +347,20 @@ void loop() {
 
 		if (TempsPauseValues.isTimerReady()) {
 			float newT = bmp.readTemperature();
-			if (isnan(newT)) {
-				// Serial.println("Failed to read from BMP280 sensor!");
+			if (isnan(newT)) { 
 			}
 			else {
 				Temperature = newT;
-				// Serial.print(F("Temperature = "));
-				// Serial.print(t);
-				// Serial.println(" *C");
 			}
 			// Read Humidity
 			float newH = bmp.readPressure();
-			// if humidity read failed, don't change h value 
 			if (isnan(newH)) {
-				// Serial.println("Failed to read from BMP280 sensor!");
 			}
 			else {
 				Humidite = newH;
-				// Serial.print(F("Pressure = "));
-				// Serial.print(h);
-				// Serial.println(" Pa");
 			}
 			TempsPauseValues.startTimer(Interval);
 		}
-		// Serial.print(F("The actual date and time is : "));
-		// Serial.println(DateActuelle);
 		TempsPause.startTimer(Interval/10);
-		BlinkLED();
 	}
-}
-
-void BlinkLED(){
-	StateLED = !StateLED;
-	digitalWrite(PinLED, StateLED);
 }
